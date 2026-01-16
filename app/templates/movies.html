@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- მარცხენა სვეტი: ჟანრები -->
+        <div class="col-md-3">
+            <h4 class="genre-title">ჟანრები</h4>
+            <ul class="genre-list list-group">
+                {% for genre in genres %}
+                <li class="list-group-item genre-item">
+                    <a href="{{ url_for('main.movies', genre=genre) }}">{{ genre }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- მარჯვენა სვეტი: ფილმები -->
+        <div class="col-md-9">
+            <h4>ფილმები</h4>
+            <div class="row g-4">
+                {% for movie in movies %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="movie-card">
+                        <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}">
+                            <div class="movie-poster-wrapper">
+                                <img src="{{ movie.poster }}" alt="{{ movie.title }}">
+                            </div>
+                            <div class="movie-info">
+                                <div class="movie-title">{{ movie.title }}</div>
+                                <div class="movie-genre">{{ movie.genre }}</div>
+                            </div>
+                        </a>
+
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                        <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}" class="btn btn-danger btn-sm mt-2 w-100">
+                            წაშლა
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

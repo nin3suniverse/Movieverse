@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container profile-page py-5">
+
+
+    <div class="profile-header mb-5">
+        <div class="profile-avatar">
+            {{ user.username[0]|upper }}
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <p class="text-muted">Movieverse მომხმარებელი</p>
+        </div>
+    </div>
+
+
+    <section class="profile-section">
+        <h4 class="section-title">ჩემ მიერ დამატებული ფილმები</h4>
+
+        {% if my_movies %}
+        <div class="movies-container">
+            {% for movie in my_movies %}
+            <div class="movie-card position-relative">
+
+
+                {% if current_user.is_admin or movie.user_id == current_user.id %}
+                <form method="POST"
+                      action="{{ url_for('main.delete_movie', movie_id=movie.id) }}"
+                      onsubmit="return confirm('ნამდვილად გსურთ ფილმის წაშლა?');"
+                      class="movie-delete-form">
+                    <button type="submit" class="btn btn-sm btn-danger movie-delete-btn">
+                        ✕
+                    </button>
+                </form>
+                {% endif %}
+
+                <a href="{{ url_for('main.movie_detail', movie_id=movie.id) }}" class="movie-link">
+                    <img src="{{ movie.poster }}" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">{{ movie.title }}</div>
+                        <div class="movie-genre">{{ movie.genre }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p class="text-muted">ჯერ ფილმი არ დაგიმატებია</p>
+            <a href="{{ url_for('main.add_movie') }}" class="btn btn-accent btn-lg">ფილმის დამატება</a>
+        {% endif %}
+    </section>
+
+
+    <section class="profile-section mt-5">
+        <h4 class="section-title">ჩემი მიმოხილვები</h4>
+
+        {% if user.reviews %}
+            {% for review in user.reviews %}
+            <div class="review-card position-relative">
+
+
+                <form method="POST"
+                      action="{{ url_for('main.delete_review', review_id=review.id) }}"
+                      onsubmit="return confirm('ნამდვილად გსურთ მიმოხილვის წაშლა?');"
+                      class="review-delete-form">
+                    <button type="submit" class="btn btn-sm btn-danger review-delete-btn">
+                        წაშლა
+                    </button>
+                </form>
+
+                <div class="review-header">
+                    <span class="review-movie">
+                        🎬 {{ review.movie.title }}
+                    </span>
+                    <span class="review-rating">
+                        {{ review.rating }} ★
+                    </span>
+                </div>
+
+                <p class="review-text">
+                    {{ review.text }}
+                </p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">ჯერ მიმოხილვა არ დაგიწერია</p>
+        {% endif %}
+    </section>
+
+</div>
+
+{% endblock %}
